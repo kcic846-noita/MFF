@@ -30,12 +30,19 @@ permalink: /
       <div class="recent-updates">
         <h3>최근 업데이트</h3>
         <ul>
-          {% assign recent_notes = site.notes | sort: "last_modified_at_timestamp" | reverse %}
-          {% for note in recent_notes limit: 5 %}
-            <li>
-              {{ note.last_modified_at | date: "%Y-%m-%d" }} — <a class="internal-link" href="{{ site.baseurl }}{{ note.url }}">{{ note.title }}</a>
-            </li>
-          {% endfor %}
+          {% if site.notes %}
+            {% assign recent_notes = site.notes | sort: "last_modified_at_timestamp" | reverse %}
+            {% for note in recent_notes limit: 5 %}
+              <li>
+                {% if note.last_modified_at %}
+                  {{ note.last_modified_at | date: "%Y-%m-%d" }} — 
+                {% endif %}
+                <a class="internal-link" href="{{ site.baseurl }}{{ note.url }}">{{ note.title }}</a>
+              </li>
+            {% endfor %}
+          {% else %}
+            <li>노트를 추가하면 여기에 표시됩니다.</li>
+          {% endif %}
         </ul>
       </div>
     </section>
@@ -46,8 +53,8 @@ permalink: /
       <p>읽었던 책들과 독서 노트를 모아둔 공간입니다.</p>
       
       <div class="books-grid">
-        {% assign reading_notes = site.notes | where_exp: "note", "note.path contains '/reading/'" | sort: "date" | reverse %}
-        {% if reading_notes.size > 0 %}
+        {% if site.books %}
+          {% assign reading_notes = site.books | sort: "date" | reverse %}
           {% for note in reading_notes %}
             <div class="book-card">
               <h3><a class="internal-link" href="{{ site.baseurl }}{{ note.url }}">{{ note.title }}</a></h3>
@@ -57,11 +64,16 @@ permalink: /
               {% if note.excerpt %}
                 <p class="book-excerpt">{{ note.excerpt | strip_html | truncatewords: 20 }}</p>
               {% endif %}
-              <small class="book-date">{{ note.date | date: "%Y-%m-%d" }}</small>
+              {% if note.date %}
+                <small class="book-date">{{ note.date | date: "%Y-%m-%d" }}</small>
+              {% endif %}
             </div>
           {% endfor %}
-        {% else %}
-          <p class="empty-state">아직 독서 노트가 없습니다. 첫 번째 책 리뷰를 작성해보세요!</p>
+        {% endif %}
+        
+        {% assign books_count = site.books | size %}
+        {% if books_count == 0 %}
+          <p class="empty-state">_books 폴더에 마크다운 파일을 추가하면 여기에 표시됩니다.</p>
         {% endif %}
       </div>
     </section>
@@ -72,16 +84,21 @@ permalink: /
       <p>여행과 일상의 순간들을 담은 사진들입니다.</p>
       
       <div class="photos-grid">
-        {% assign photo_notes = site.notes | where_exp: "note", "note.path contains '/photos/'" | sort: "date" | reverse %}
-        {% if photo_notes.size > 0 %}
+        {% if site.photos %}
+          {% assign photo_notes = site.photos | sort: "date" | reverse %}
           {% for note in photo_notes %}
             <div class="photo-card">
               <h3><a class="internal-link" href="{{ site.baseurl }}{{ note.url }}">{{ note.title }}</a></h3>
-              <small class="photo-date">{{ note.date | date: "%Y-%m-%d" }}</small>
+              {% if note.date %}
+                <small class="photo-date">{{ note.date | date: "%Y-%m-%d" }}</small>
+              {% endif %}
             </div>
           {% endfor %}
-        {% else %}
-          <p class="empty-state">사진이 준비되면 여기에 표시됩니다.</p>
+        {% endif %}
+        
+        {% assign photos_count = site.photos | size %}
+        {% if photos_count == 0 %}
+          <p class="empty-state">_photos 폴더에 마크다운 파일을 추가하면 여기에 표시됩니다.</p>
         {% endif %}
       </div>
     </section>
@@ -92,16 +109,21 @@ permalink: /
       <p>좋아하는 음악과 음악에 대한 생각들을 정리한 공간입니다.</p>
       
       <div class="music-grid">
-        {% assign music_notes = site.notes | where_exp: "note", "note.path contains '/music/'" | sort: "date" | reverse %}
-        {% if music_notes.size > 0 %}
+        {% if site.music %}
+          {% assign music_notes = site.music | sort: "date" | reverse %}
           {% for note in music_notes %}
             <div class="music-card">
               <h3><a class="internal-link" href="{{ site.baseurl }}{{ note.url }}">{{ note.title }}</a></h3>
-              <small class="music-date">{{ note.date | date: "%Y-%m-%d" }}</small>
+              {% if note.date %}
+                <small class="music-date">{{ note.date | date: "%Y-%m-%d" }}</small>
+              {% endif %}
             </div>
           {% endfor %}
-        {% else %}
-          <p class="empty-state">음악 관련 포스트가 준비되면 여기에 표시됩니다.</p>
+        {% endif %}
+        
+        {% assign music_count = site.music | size %}
+        {% if music_count == 0 %}
+          <p class="empty-state">_music 폴더에 마크다운 파일을 추가하면 여기에 표시됩니다.</p>
         {% endif %}
       </div>
     </section>
@@ -112,16 +134,21 @@ permalink: /
       <p>영화, 드라마, 다큐멘터리 등 시청한 영상 콘텐츠에 대한 리뷰와 생각들입니다.</p>
       
       <div class="videos-grid">
-        {% assign video_notes = site.notes | where_exp: "note", "note.path contains '/videos/'" | sort: "date" | reverse %}
-        {% if video_notes.size > 0 %}
+        {% if site.videos %}
+          {% assign video_notes = site.videos | sort: "date" | reverse %}
           {% for note in video_notes %}
             <div class="video-card">
               <h3><a class="internal-link" href="{{ site.baseurl }}{{ note.url }}">{{ note.title }}</a></h3>
-              <small class="video-date">{{ note.date | date: "%Y-%m-%d" }}</small>
+              {% if note.date %}
+                <small class="video-date">{{ note.date | date: "%Y-%m-%d" }}</small>
+              {% endif %}
             </div>
           {% endfor %}
-        {% else %}
-          <p class="empty-state">영상 관련 포스트가 준비되면 여기에 표시됩니다.</p>
+        {% endif %}
+        
+        {% assign videos_count = site.videos | size %}
+        {% if videos_count == 0 %}
+          <p class="empty-state">_videos 폴더에 마크다운 파일을 추가하면 여기에 표시됩니다.</p>
         {% endif %}
       </div>
     </section>
